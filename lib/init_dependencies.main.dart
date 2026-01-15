@@ -1,0 +1,84 @@
+part of 'init_dependencies.dart';
+
+final serviceLocator = GetIt.instance;
+
+Future<void> initDependencies() async {
+  Supabase supabase = await Supabase.initialize(
+    url: AppSecrets.supabaseUrl,
+    anonKey: AppSecrets.supabaseAnonKey,
+  );
+  serviceLocator.registerLazySingleton(() => supabase.client);
+  _initAuth();
+  _initBlog();
+
+  //Hive initialization
+  Hive.defaultDirectory = (await getApplicationDocumentsDirectory()).path;
+
+  serviceLocator.registerLazySingleton(() => Hive.box(name: 'blogs'));
+
+  // core
+  serviceLocator.registerLazySingleton(() => AppUserCubit());
+
+  serviceLocator.registerLazySingleton(() => InternetConnection());
+  serviceLocator.registerLazySingleton<ConnectionChecker>(
+    () => ConnectionCheckerImpl(internetConnection: serviceLocator()),
+  );
+}
+
+void _initAuth() {
+  serviceLocator
+    // Datasources
+    // We need to specify that '<AuthRemoteDataSource>' because the parameter 'authRemoteDataSource' from 'AuthRepositoryImpl'
+    // require an object of type 'AuthRemoteDataSource' and not an object of type 'AuthRemoteDataSourceSupabaseImpl'.
+    // If we don't specify this, GetIt won't be able to find this reference when creating a AuthRepositoryImpl instance.
+    ..registerLazySingleton<AuthRemoteDataSource>(
+      () => AuthRemoteDataSourceSupabaseImpl(serviceLocator()),
+    )
+    // Repositories
+    ..registerLazySingleton<AuthRepository>(
+      () => AuthRepositoryImpl(
+        authRemoteDataSource: serviceLocator(),
+        connectionChecker: serviceLocator(),
+      ),
+    )
+    // Usecases
+    ..registerLazySingleton(() => UserSignUp(authRepository: serviceLocator()))
+    ..registerLazySingleton(() => UserSignIn(authRepositoy: serviceLocator()))
+    ..registerLazySingleton(() => CurrentUser(authRepository: serviceLocator()))
+    // BLoC
+    ..registerLazySingleton(
+      () => AuthBloc(
+        userSignUp: serviceLocator(),
+        userSignIn: serviceLocator(),
+        currentUser: serviceLocator(),
+        appUserCubit: serviceLocator(),
+      ),
+    );
+}
+
+void _initBlog() {
+  serviceLocator
+    // Datasources
+    ..registerLazySingleton<BlogRemoteDataSource>(
+      () => BlogRemoteDataSourceImpl(supabaseClient: serviceLocator()),
+    )
+    ..registerLazySingleton<BlogLocalDataSource>(
+      () => BlogLocalDataSourceImpl(serviceLocator()),
+    )
+    // Repositories
+    ..registerLazySingleton<BlogRepository>(
+      () => BlogRepositoryImpl(
+        blogRemoteDataSource: serviceLocator(),
+        blogLocalDataSource: serviceLocator(),
+        connectionChecker: serviceLocator(),
+      ),
+    )
+    // Usecases
+    ..registerLazySingleton(() => UploadBlog(blogRepository: serviceLocator()))
+    ..registerLazySingleton(() => GetAllBlogs(blogRepository: serviceLocator()))
+    // BLoC
+    ..registerLazySingleton(
+      () =>
+          BlogBloc(uploadBlog: serviceLocator(), getAllBlogs: serviceLocator()),
+    );
+}
