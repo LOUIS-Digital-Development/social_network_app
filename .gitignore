@@ -125,3 +125,15 @@ lib/core/secrets/
 # Local Hive database
 *.hive
 *.lock
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+
+# macOS
+.DS_Store
+
+# Environment variables
+.env
+.env.local
