@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:bloc_app/core/constants/supabase_constants/fields/profile_fields.dart';
 import 'package:bloc_app/core/constants/supabase_schema/buckets.dart';
+import 'package:bloc_app/core/constants/supabase_schema/fields/profile_fields.dart';
 import 'package:bloc_app/core/constants/supabase_schema/tables.dart';
 import 'package:bloc_app/core/error/exceptions.dart';
 import 'package:bloc_app/features/blog/data/models/blog_model.dart';
