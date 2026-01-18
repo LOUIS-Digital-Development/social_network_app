@@ -56,13 +56,9 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: AppTheme.darkThemeMode,
-      home: BlocSelector<AppUserCubit, AppUserState, bool>(
-        selector: (state) {
-          return state is AppUserSignedIn;
-        },
+      home: BlocBuilder<AppUserCubit, AppUserState>(
         builder: (context, state) {
-          // state is true when AppUserCubit is on AppUserSignedIn state
-          if (state) {
+          if (state is AppUserSignedIn) {
             return const BlogPage();
           }
           return const SignInPage();
