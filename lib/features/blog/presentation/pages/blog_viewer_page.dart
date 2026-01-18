@@ -5,7 +5,7 @@ import 'package:bloc_app/core/utils/format_date.dart';
 import 'package:bloc_app/features/blog/domain/entities/blog.dart';
 import 'package:flutter/material.dart';
 
-class BlogViewerPage extends StatefulWidget {
+class BlogViewerPage extends StatelessWidget {
   static PageRoute route(Blog blog) =>
       MaterialPageRoute(builder: (context) => BlogViewerPage(blog: blog));
 
@@ -13,22 +13,11 @@ class BlogViewerPage extends StatefulWidget {
   const BlogViewerPage({super.key, required this.blog});
 
   @override
-  State<BlogViewerPage> createState() => _BlogViewerPageState();
-}
-
-class _BlogViewerPageState extends State<BlogViewerPage> {
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
       body: FutureBuilder(
-        future: precacheImage(NetworkImage(widget.blog.imageUrl), context),
+        future: precacheImage(NetworkImage(blog.imageUrl), context),
         builder: (context, asyncSnapshot) {
           if (asyncSnapshot.connectionState == ConnectionState.waiting) {
             return const Loader();
@@ -41,7 +30,7 @@ class _BlogViewerPageState extends State<BlogViewerPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.blog.title,
+                      blog.title,
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -49,7 +38,7 @@ class _BlogViewerPageState extends State<BlogViewerPage> {
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      'By ${widget.blog.posterName}',
+                      'By ${blog.posterName}',
                       style: const TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: 16,
@@ -57,7 +46,7 @@ class _BlogViewerPageState extends State<BlogViewerPage> {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      '${formatDateBydMMMYYYY(widget.blog.updatedAt)} . ${calculateReadingTime(widget.blog.content)} min',
+                      '${formatDateBydMMMYYYY(blog.updatedAt)} . ${calculateReadingTime(blog.content)} min',
                       style: const TextStyle(
                         color: AppPallete.greyColor,
                         fontSize: 16,
@@ -66,11 +55,11 @@ class _BlogViewerPageState extends State<BlogViewerPage> {
                     const SizedBox(height: 20),
                     ClipRRect(
                       borderRadius: BorderRadiusGeometry.circular(10),
-                      child: Image(image: NetworkImage(widget.blog.imageUrl)),
+                      child: Image(image: NetworkImage(blog.imageUrl)),
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      widget.blog.content,
+                      blog.content,
                       style: const TextStyle(fontSize: 16, height: 2),
                     ),
                   ],
