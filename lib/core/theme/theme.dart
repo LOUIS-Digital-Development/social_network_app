@@ -22,6 +22,12 @@ class AppTheme {
       focusedBorder: _border(AppPallete.gradient2),
       errorBorder: _border(AppPallete.errorColor),
     ),
-    appBarTheme: const AppBarTheme(backgroundColor: AppPallete.backgroundColor),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: AppPallete.backgroundColor,
+      surfaceTintColor: AppPallete.backgroundColor,
+    ),
+    navigationBarTheme: const NavigationBarThemeData(
+      backgroundColor: AppPallete.backgroundColor,
+    ),
   );
 }
